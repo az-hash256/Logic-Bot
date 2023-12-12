@@ -19,7 +19,7 @@ data Prop = Var String | Con Bool | Uno Unop Prop | Duo Duop Prop Prop deriving 
 data Unop = Not deriving Show
 
 -- Data Type representing Binary Operators:
-data Duop = And | Or | Implies | Iff deriving Show
+data Duop = And | Or | Xor | Implies | Iff deriving Show
 
 -- Data Type representing an Argument, is a record type consisting of a List of Propositions as premises, and a single Proposition as a conclusion.
 data Arg = Arg {
@@ -36,7 +36,7 @@ def = emptyDef{ commentStart = "{-"
               , identLetter = alphaNum
               , opStart = oneOf "~&||<->"
               , opLetter = oneOf "~&||<->"
-              , reservedOpNames = ["~", "!", "¬", "&", "&&", "∧", "·", "||", "∨", "+", "->", "⇒", "=>", "⊃", "→", "<->", "↔", "=", "≡", "⇔"]
+              , reservedOpNames = ["~", "!", "¬", "not", "and", "&", "&&", "∧", "·", "or", "||", "∨", "+", "implies", "->", "⇒", "=>", "⊃", "→", "iff", "<->", "↔", "=", "≡", "⇔", "<=>", "⊕", "⊻", "xor"]
               , reservedNames = ["true", "⊤", "1", "false", "⊥", "0", "nop", ",", "|=", "∴"]
               }
 
@@ -51,25 +51,12 @@ TokenParser{ parens = m_parens
 -- Parses Propositions
 exprparser :: Parser Prop
 exprparser = buildExpressionParser table term <?> "proposition"
-table = [ [Prefix (m_reservedOp "~" >> return (Uno Not))]
-	, [Prefix (m_reservedOp "!" >> return (Uno Not))]
-	, [Prefix (m_reservedOp "¬" >> return (Uno Not))]
-	, [Infix (m_reservedOp "&&" >> return (Duo And)) AssocLeft]
-	, [Infix (m_reservedOp "&" >> return (Duo And)) AssocLeft]
-	, [Infix (m_reservedOp "∧" >> return (Duo And)) AssocLeft]
-	, [Infix (m_reservedOp "·" >> return (Duo And)) AssocLeft]
-	, [Infix (m_reservedOp "||" >> return (Duo Or)) AssocLeft]
-	, [Infix (m_reservedOp "∨" >> return (Duo Or)) AssocLeft]
-	, [Infix (m_reservedOp "+" >> return (Duo Or)) AssocLeft]
-	, [Infix (m_reservedOp "<->" >> return (Duo Iff)) AssocLeft]
-        , [Infix (m_reservedOp "↔" >> return (Duo Iff)) AssocLeft]
-        , [Infix (m_reservedOp "=" >> return (Duo Iff)) AssocLeft]
-        , [Infix (m_reservedOp "≡" >> return (Duo Iff)) AssocLeft]
-        , [Infix (m_reservedOp "⇔" >> return (Duo Iff)) AssocLeft]
-	, [Infix (m_reservedOp "->" >> return (Duo Implies)) AssocLeft]
-	, [Infix (m_reservedOp "⇒" >> return (Duo Implies)) AssocLeft]
-	, [Infix (m_reservedOp "=>" >> return (Duo Implies)) AssocLeft]
-	, [Infix (m_reservedOp "⊃" >> return (Duo Implies)) AssocLeft]
+table = [ [Prefix (m_reservedOp "~" >> return (Uno Not)), Prefix (m_reservedOp "!" >> return (Uno Not)), Prefix (m_reservedOp "¬" >> return (Uno Not)), Prefix (m_reservedOp "not" >> return (Uno Not))]
+	, [Infix (m_reservedOp "&&" >> return (Duo And)) AssocLeft, Infix (m_reservedOp "&" >> return (Duo And)) AssocLeft, Infix (m_reservedOp "∧" >> return (Duo And)) AssocLeft, Infix (m_reservedOp "·" >> return (Duo And)) AssocLeft, Infix (m_reservedOp "and" >> return (Duo And)) AssocLeft]
+	, [Infix (m_reservedOp "||" >> return (Duo Or)) AssocLeft, Infix (m_reservedOp "∨" >> return (Duo Or)) AssocLeft, Infix (m_reservedOp "+" >> return (Duo Or)) AssocLeft, Infix (m_reservedOp "or" >> return (Duo Or)) AssocLeft]
+	, [Infix (m_reservedOp "⊕" >> return (Duo Xor)) AssocLeft, Infix (m_reservedOp "⊻" >> return (Duo Xor)) AssocLeft, Infix (m_reservedOp "xor" >> return (Duo Xor)) AssocLeft]
+	, [Infix (m_reservedOp "->" >> return (Duo Implies)) AssocLeft, Infix (m_reservedOp "⇒" >> return (Duo Implies)) AssocLeft, Infix (m_reservedOp "=>" >> return (Duo Implies)) AssocLeft, Infix (m_reservedOp "→" >> return (Duo Implies)) AssocLeft, Infix (m_reservedOp "⊃" >> return (Duo Implies)) AssocLeft, Infix (m_reservedOp "implies" >> return (Duo Implies)) AssocLeft]
+	, [Infix (m_reservedOp "<->" >> return (Duo Iff)) AssocLeft, Infix (m_reservedOp "↔" >> return (Duo Iff)) AssocLeft, Infix (m_reservedOp "=" >> return (Duo Iff)) AssocLeft, Infix (m_reservedOp "≡" >> return (Duo Iff)) AssocLeft, Infix (m_reservedOp "⇔" >> return (Duo Iff)) AssocLeft, Infix (m_reservedOp "<=>" >> return (Duo Iff)) AssocLeft, Infix (m_reservedOp "iff" >> return (Duo Iff)) AssocLeft]
         ]
 
 -- Various Booleans
@@ -110,6 +97,7 @@ evalProp assignments (Var x) = case lookup x assignments of
 evalProp assignments (Uno Not p)       = not (evalProp assignments p)
 evalProp assignments (Duo And p q)     = evalProp assignments p && evalProp assignments q
 evalProp assignments (Duo Or p q)      = evalProp assignments p || evalProp assignments q
+evalProp assignments (Duo Xor p q)     = evalProp assignments p /= evalProp assignments q
 evalProp assignments (Duo Implies p q) = not (evalProp assignments p) || evalProp assignments q
 evalProp assignments (Duo Iff p q)     = evalProp assignments p == evalProp assignments q
 
