@@ -17,3 +17,16 @@ Otherwise:
 - Propositions must be Alphanumerical, other than that there's no limit to what Strings can represent propositions. 
 - An empty set of premises is allowed but you have to always have a conclusion.
 - No more than 16 distinct propositional variables is allowed to prevent slowing downing the bot.
+
+## Supported Operators
+
+List is ordered from top to bottom starting at the highest precedent operator
+
+| Operators | List of Symbols           |
+|-----------|---------------------------|
+| Not       | ~, !, ¬, not              |
+| And       | &&, &, ∧, ·, and          |
+| Or        | \|\|, ∨, +, or              |
+| Xor       | ⊕, ⊻, xor                |
+| Implies   | ->, →, =>, ⇒, ⊃, implies | 
+| Iff       | <->, ↔, =, ≡, ⇔, <=>, iff |
