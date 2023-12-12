@@ -26,7 +26,15 @@ List is ordered from top to bottom starting at the highest precedent operator
 |-----------|---------------------------|
 | Not       | ~, !, ¬, not              |
 | And       | &&, &, ∧, ·, and          |
-| Or        | \|\|, ∨, +, or              |
+| Or        | \|\|, ∨, +, or            |
 | Xor       | ⊕, ⊻, xor                |
 | Implies   | ->, →, =>, ⇒, ⊃, implies | 
 | Iff       | <->, ↔, =, ≡, ⇔, <=>, iff |
+
+
+The symbols for True and False:
+
+| Boolean   | List of Symbols           |
+|-----------|---------------------------|
+| True      | true, 1, ⊤                |
+| False     | false, 0, ⊥               |
