@@ -7,7 +7,7 @@ I wrote this for a few reasons, mainly:
 If you use it, I hope you enjoy!
 
 ## Directions
-To determine the validity of an argument type:
+To determine the validity of an argument using the Bot, type the following message into Discord:
 ```
 eval [arg]
 ```
