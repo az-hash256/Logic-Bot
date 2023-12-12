@@ -19,11 +19,9 @@ main = do
              { discordToken = "Your Personal Token"
              , discordOnEvent = eventHandler
              , discordOnLog = \s -> TIO.putStrLn s >> TIO.putStrLn ""
-             } -- if you see OnLog error, post in the discord / open an issue
+             }
 
     TIO.putStrLn userFacingError
-    -- userFacingError is an unrecoverable error
-    -- put normal 'cleanup' code in discordOnEnd (see examples)
 
 eventHandler :: Event -> DiscordHandler ()
 eventHandler event = case event of
