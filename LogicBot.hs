@@ -16,7 +16,7 @@ import ValidityChecker
 main :: IO ()
 main = do
     userFacingError <- runDiscord $ Discord.def
-             { discordToken = "MTE4MzQ5MDEyODY2MDkyMjQ5OA.GnRvjV.xO4QT_mBZzx5i_-V_C5C31uFVK_dZXVNNLLBko"
+             { discordToken = "Your Personal Token"
              , discordOnEvent = eventHandler
              , discordOnLog = \s -> TIO.putStrLn s >> TIO.putStrLn ""
              } -- if you see OnLog error, post in the discord / open an issue
