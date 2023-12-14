@@ -37,7 +37,7 @@ def = emptyDef{ commentStart = "{-"
               , opStart = oneOf "~&||<->"
               , opLetter = oneOf "~&||<->"
               , reservedOpNames = ["~", "!", "¬", "not", "and", "&", "&&", "∧", "·", "or", "||", "∨", "+", "implies", "->", "⇒", "=>", "⊃", "→", "iff", "<->", "↔", "=", "≡", "⇔", "<=>", "⊕", "⊻", "xor"]
-              , reservedNames = ["true", "⊤", "1", "false", "⊥", "0", "nop", ",", "|=", "∴"]
+              , reservedNames = ["true", "⊤", "1", "false", "⊥", "0", "nop", ",", "|=", "∴", "therefore"]
               }
 
 -- Parses Tokens
@@ -74,11 +74,17 @@ argParser :: Parser (Maybe Arg)
 argParser = do
   premList <- exprparser `sepBy` (char ',' >> spaces)
   spaces
-  string "|="
+  therefore_symbol
   spaces
   conclusionProp <- exprparser
   eof
   return (Just (Arg premList conclusionProp))
+
+therefore_symbol :: Parser ()
+therefore_symbol = do
+  try (string "|=") <|> try (string "therefore") <|> try (string "∴")
+  spaces
+  return ()
 
 -- Maybe wrapper around Argument Parser, also checks for Variable count to limit Long Compute Times
 parseArg :: String -> Maybe Arg
